@@ -44,7 +44,16 @@ static inline int LeastSignificantSetBit(u32 val) {
 }
 static inline int LeastSignificantSetBit(u64 val) {
     unsigned long index;
+#ifndef ARCHITECTURE_x86
     _BitScanForward64(&index, val);
+#else
+    if (static_cast<u32>(val) != 0) {
+        _BitScanForward(&index, static_cast<u32>(val));
+    } else {
+        _BitScanForward(&index, static_cast<u32>(val >> 32));
+        index += 32;
+    }
+#endif
     return (int)index;
 }
 #else

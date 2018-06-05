@@ -2,7 +2,6 @@
 # so we made our own one. This is basically a trimmed down version of the shipped CMakeLists.txt
 # The differences are:
 #  - removed support for legacy CMake versions
-#  - removed support for 32-bit
 #  - removed -march=native flag
 #  - removed rdrand module.asm as a workaround for an issue (see below)
 #  - added prefix "CRYPTOPP_" to all option names
@@ -182,12 +181,16 @@ if(MSVC AND NOT CRYPTOPP_DISABLE_ASM)
         # rdrand.asm as "/crytopp.dir/{Debug|Release}/cryptopp/rdrand.asm.obj". The additional target folder "cryptopp"
         # is specified because the file rdrand.asm is in the source folder "cryptopp". But MSVC assembler can't build
         # target file to an non-existing folder("cryptopp").
-        list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64dll.asm)
-        list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64masm.asm)
         # list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/rdrand.asm)
-        set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64dll.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
-        set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64masm.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
-        # set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/rdrand.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64dll.asm)
+            list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64masm.asm)
+            set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64dll.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
+            set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/x64masm.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
+#           set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/rdrand.asm PROPERTIES COMPILE_FLAGS "/D_M_X64")
+        else()
+#           set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/cryptopp/rdrand.asm PROPERTIES COMPILE_FLAGS "/D_M_X86 /safeseh")
+        endif()
         enable_language(ASM_MASM)
     endif()
 endif()
