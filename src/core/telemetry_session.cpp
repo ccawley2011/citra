@@ -8,7 +8,7 @@
 #include "common/assert.h"
 #include "common/file_util.h"
 #include "common/scm_rev.h"
-#ifdef ARCHITECTURE_x86_64
+#if defined(ARCHITECTURE_x86) || defined(ARCHITECTURE_x86_64)
 #include "common/x64/cpu_detect.h"
 #endif
 #include "core/core.h"
@@ -22,7 +22,7 @@
 
 namespace Core {
 
-#ifdef ARCHITECTURE_x86_64
+#if defined(ARCHITECTURE_x86) || defined(ARCHITECTURE_x86_64)
 static const char* CpuVendorToStr(Common::CPUVendor vendor) {
     switch (vendor) {
     case Common::CPUVendor::INTEL:
@@ -125,7 +125,7 @@ TelemetrySession::TelemetrySession() {
     AddField(Telemetry::FieldType::App, "BuildName", Common::g_build_name);
 
 // Log user system information
-#ifdef ARCHITECTURE_x86_64
+#if defined(ARCHITECTURE_x86) || defined(ARCHITECTURE_x86_64)
     AddField(Telemetry::FieldType::UserSystem, "CPU_Model", Common::GetCPUCaps().cpu_string);
     AddField(Telemetry::FieldType::UserSystem, "CPU_BrandString",
              Common::GetCPUCaps().brand_string);

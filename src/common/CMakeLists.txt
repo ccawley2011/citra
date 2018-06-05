@@ -92,6 +92,15 @@ add_library(common STATIC
     vector_math.h
 )
 
+if(ARCHITECTURE_x86)
+    target_sources(common
+        PRIVATE
+            x64/cpu_detect.cpp
+
+            x64/cpu_detect.h
+    )
+endif()
+
 if(ARCHITECTURE_x86_64)
     target_sources(common
         PRIVATE
